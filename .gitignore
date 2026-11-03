@@ -1,0 +1,27 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Configuración local, credenciales y datos (el histórico vive en la base, no en el repo)
+backend/.env
+*.env
+!backend/.env.example
+backend/data/
+backend/fixtures/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+
+# Herramientas locales
+.claude/
+
+# Respaldos locales (versión anterior, base vieja)
+respaldo/
+
+# Paquetes de despliegue y compilación de producción
+release/
+frontend/dist-prod/

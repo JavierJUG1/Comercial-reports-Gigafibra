@@ -1,0 +1,23 @@
+# Servicio systemd de Comercial reports (Gigafibra). Copiar a /etc/systemd/system/comercial-reports.service
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now comercial-reports
+#   journalctl -u comercial-reports -f        # registros
+# Un solo proceso: el corte automático de fin de mes corre dentro de él (no usar varios workers).
+
+[Unit]
+Description=Comercial reports - Gigafibra (reporte mensual de suscripciones de TV)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=comercial-reports
+Group=comercial-reports
+WorkingDirectory=/var/www/html/Comercial reports
+ExecStart="/var/www/html/Comercial reports/backend/.venv/bin/python" "/var/www/html/Comercial reports/backend/scripts/serve.py" --host 127.0.0.1 --port 8010
+Environment=PYTHONUNBUFFERED=1
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

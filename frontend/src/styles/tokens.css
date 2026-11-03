@@ -1,0 +1,84 @@
+/* Gigafibra TV Analytics · tokens del design system.
+   Marca (Figma Gigafibra web): naranja #FF6900, tinta #0B0B0C, Roboto.
+   El naranja se reserva para la acción principal, la navegación activa y la serie protagonista. */
+:root {
+  color-scheme: light;
+
+  /* Marca */
+  --brand: #ff6900;
+  --brand-hover: #eb5f00;
+  --brand-press: #d45500;
+  --brand-soft: #fff3ea;
+  --brand-ring: rgba(255, 105, 0, 0.28);
+  --brand-text: #c2410c; /* naranja legible como texto pequeño (4.9:1) */
+  --ink: #0b0b0c;
+
+  /* Neutros (cálidos, un paso de diferencia entre capas) */
+  --canvas: #f6f6f4;
+  --surface: #ffffff;
+  --surface-2: #fafaf9;
+  --surface-3: #f2f2f0;
+  --hover: #f7f7f5;
+  --border: #e6e5e2;
+  --border-strong: #d4d3cf;
+  --divider: #efeeeb;
+
+  --text: #161618;
+  --text-2: #4f4f55;
+  --text-3: #6f6f76;
+  --text-4: #a1a1a8;
+
+  /* Estados (con icono y texto, nunca solo color) */
+  --pos: #137333;
+  --pos-bg: #e9f6ee;
+  --pos-mark: #22a052;
+  --neg: #b42318;
+  --neg-bg: #fdeeec;
+  --neg-mark: #e0483b;
+  --warn: #a15c07;
+  --warn-bg: #fff6e5;
+  --info: #1d5fb8;
+  --info-bg: #eef4fd;
+
+  /* Datos */
+  --chart-grid: #ecebe7;
+  --chart-axis: #d4d3cf;
+  --chart-label: #85858b;
+  --series-main: var(--brand);
+  --series-wash: rgba(255, 105, 0, 0.09);
+  /* Paleta categórica validada (CVD, orden fijo) para segmentos */
+  --cat-1: #2a78d6;
+  --cat-2: #eb6834;
+  --cat-3: #1baf7a;
+  --cat-4: #eda100;
+  --cat-5: #e87ba4;
+  --cat-6: #008300;
+  --cat-7: #6250d6;
+  --cat-8: #e34948;
+
+  /* Barra lateral */
+  --side-bg: #0b0b0c;
+  --side-text: #a3a3aa;
+  --side-text-strong: #f4f4f5;
+  --side-hover: rgba(255, 255, 255, 0.06);
+  --side-active: rgba(255, 255, 255, 0.09);
+  --side-border: rgba(255, 255, 255, 0.08);
+
+  /* Forma y movimiento */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+  --shadow-pop: 0 1px 2px rgba(16, 16, 18, 0.05), 0 12px 32px -8px rgba(16, 16, 18, 0.16);
+  --shadow-drawer: -24px 0 48px -24px rgba(16, 16, 18, 0.22);
+  --shadow-xs: 0 1px 2px rgba(16, 16, 18, 0.04);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 140ms;
+
+  --font: "Roboto Variable", "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --side-w: 244px;
+  --rail-w: 68px;
+  --page-pad: 32px;
+  --content-max: 1400px;
+}

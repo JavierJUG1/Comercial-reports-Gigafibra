@@ -1,0 +1,54 @@
+{
+  "nombre": "GET Lista Subscriptions (vista reporte: lead, estrato, ciudad, PPPoE, plan, precio)",
+  "postman": {
+    "workspace": "My Workspace",
+    "coleccion": "ERPNext API",
+    "coleccion_id": "37183144-b12ba174-af7c-4f80-a2e5-2106f2c00762",
+    "peticion_id": "37183144-98a8ea80-7cd2-bc82-6ddd-edf5efa39f10",
+    "url_web": "https://go.postman.co/request/37183144-98a8ea80-7cd2-bc82-6ddd-edf5efa39f10"
+  },
+  "metodo": "GET",
+  "ruta": "/api/resource/Subscription",
+  "autenticacion": "Authorization: token {{api_key}}:{{api_secret}} (heredada de la colección)",
+  "parametros": {
+    "fields": [
+      "name",
+      "docstatus",
+      "status",
+      "party",
+      "creation",
+      "custom_lead",
+      "custom_estrato",
+      "party_type",
+      "custom_ciudad_l",
+      "custom_pppoe_username",
+      "plans.plan as plan",
+      "custom_total_price",
+      "custom_motivo_de_desconto",
+      "custom_cliente_b2b",
+      "custom_conjunto",
+      "plans.name as plan_detail_name"
+    ],
+    "limit_page_length": 0,
+    "order_by": "creation desc"
+  },
+  "columnas_excel": [
+    ["Sr", null],
+    ["ID", "name"],
+    ["Docstatus", "docstatus"],
+    ["Status", "status"],
+    ["Party", "party"],
+    ["Creation", "creation"],
+    ["Lead", "custom_lead"],
+    ["Estrato", "custom_estrato"],
+    ["Party Type", "party_type"],
+    ["Ciudad", "custom_ciudad_l"],
+    ["PPPoE Username", "custom_pppoe_username"],
+    ["Plan (Subscription Plan Detail)", "plan"],
+    ["Total Price", "custom_total_price"],
+    ["Motivo de Desconto", "custom_motivo_de_desconto"],
+    ["Cliente B2B", "custom_cliente_b2b"],
+    ["Conjunto", "custom_conjunto"],
+    ["Name (Subscription Plan Detail)", "plan_detail_name"]
+  ]
+}

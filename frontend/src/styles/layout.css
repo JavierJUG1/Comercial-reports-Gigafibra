@@ -1,0 +1,199 @@
+/* ============================================================ barra superior */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--side-bg);
+  color: var(--side-text-strong);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.topbar__in {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  height: 56px;
+  padding: 0 var(--page-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.topbar__brand img {
+  height: 22px;
+  width: auto;
+}
+.topbar__product {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--side-text);
+  padding: 3px 8px;
+  border: 1px solid var(--side-border);
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+}
+.env-chip {
+  font-size: 9.5px;
+  line-height: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(255, 105, 0, 0.16);
+  color: #ff9a52;
+  white-space: nowrap;
+}
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px 4px 10px;
+  border-radius: var(--r-pill);
+  color: var(--side-text);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.topbar__user:hover {
+  background: var(--side-hover);
+  color: var(--side-text-strong);
+}
+.topbar__name {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(140deg, #ff7a1a, #e85400);
+  flex: 0 0 auto;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--text-4);
+}
+.dot--ok {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.16);
+}
+.dot--warn {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16);
+}
+.dot--err {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+}
+.dot--run {
+  background: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-ring);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ============================================================ página */
+.page {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 28px var(--page-pad) 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: rise-in 260ms var(--ease) both;
+}
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+}
+.page-head__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.page-head h1 {
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  color: var(--ink);
+}
+.page-head p {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--text-3);
+}
+.page-head__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1180px) {
+  :root {
+    --page-pad: 24px;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --page-pad: 16px;
+  }
+  .topbar__in {
+    height: 52px;
+  }
+  .topbar__brand img {
+    height: 18px;
+  }
+  .topbar__name {
+    display: none;
+  }
+  .page {
+    padding-top: 18px;
+    padding-bottom: 40px;
+    gap: 14px;
+  }
+  .page-head h1 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .page-head p {
+    font-size: 13px;
+  }
+  .page-head__actions {
+    width: 100%;
+  }
+}
+@media (max-width: 400px) {
+  .topbar__product {
+    display: none;
+  }
+}
