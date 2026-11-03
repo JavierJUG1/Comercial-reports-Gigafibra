@@ -140,3 +140,32 @@ cd backend
 ```
 
 La versión anterior con dashboard completo está en `respaldo/version-completa-dashboard-2026-11-03.zip`.
+
+## 8. Producción (servidor 10.20.67.35)
+
+Publicado en **http://10.20.67.35/comercial_reports/**, con inicio de sesión de ERPNext (Office 365), igual que el
+portal de reportes regulatorios.
+
+| | |
+|---|---|
+| Servidor | Rocky Linux 9.4 `vm-dev-web.gigafibra.co`, SSH `root@10.20.67.35` (llave `id_ed25519_portal_reportes`) |
+| Carpeta | `/var/www/html/Comercial reports` (dueño `comercial-reports`, permisos 750/640; `backend/.env` 600) |
+| Servicio | systemd `comercial-reports` → `127.0.0.1:8010`, Python 3.12 en `backend/.venv`. Aquí corre el corte automático |
+| nginx | `/etc/nginx/comercial_reports.locations`, incluido en `/etc/nginx/conf.d/geral.conf` junto al portal de reportes. La carpeta del proyecto está dentro del webroot y nginx responde 404 a cualquier archivo suyo |
+| SELinux | regla `bin_t` para `backend/.venv/bin` (escrita con `\s` en lugar del espacio: `semanage` no acepta espacios) |
+| Ingreso | OAuth Client de ERPNext "Comercial reports - Gigafibra" con Redirect URIs `http://10.20.67.35/comercial_reports/api/auth/callback` y `http://localhost:8010/api/auth/callback` |
+| `.env` | `APP_ENV=production`, `BASE_PATH=/comercial_reports`, `AUTH_MODE=erpnext`, `COOKIE_SECURE=false` (el servidor publica por HTTP) |
+
+**Un solo lugar toma los cortes**: producción. En la copia local `SCHEDULER_ENABLED=false`.
+
+Actualizar a una versión nueva:
+
+```powershell
+backend\.venv\Scripts\python deploy\empaquetar.py      # compila para /comercial_reports, prueba y arma release\*.zip
+scp -i ~\.ssh\id_ed25519_portal_reportes release\comercial-reports_<fecha>.zip deploy\instalar_servidor.sh root@10.20.67.35:/root/comercial_reports_deploy/
+ssh -i ~\.ssh\id_ed25519_portal_reportes root@10.20.67.35 "cd /root/comercial_reports_deploy && bash instalar_servidor.sh comercial-reports_<fecha>.zip"
+```
+
+El script respalda el código anterior en `/root/comercial_reports_backups/` y nunca reemplaza `backend/.env`,
+`backend/data/` ni `backend/.venv`. Registros: `journalctl -u comercial-reports -f`. Respalde periódicamente
+`backend/data/` (Excel, `.json` e historial de cortes).

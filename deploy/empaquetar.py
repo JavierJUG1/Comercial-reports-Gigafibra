@@ -49,7 +49,7 @@ def files() -> list[tuple[Path, str]]:
         if p.is_file():
             add(p, "frontend/dist/" + p.relative_to(dist).as_posix())
     for p in sorted((ROOT / "deploy").iterdir()):
-        if p.is_file() and p.suffix in (".service", ".locations", ".py", ".md"):
+        if p.is_file() and p.suffix in (".service", ".locations", ".py", ".md", ".sh"):
             add(p, f"deploy/{p.name}")
     add(ROOT / "README.md", "README.md")
     for p in sorted((ROOT / "docs").glob("*.md")):
