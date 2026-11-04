@@ -28,6 +28,27 @@
   --text-3: #6f6f76;
   --text-4: #a1a1a8;
 
+  /* Detalles de componentes (cada modo define los suyos) */
+  --border-hover: #c4c3be;
+  --picked-border: #e9c4a6; /* filtro con valor */
+  --picked-bg: #fffaf6;
+  --col-current: #fffaf5; /* columna del último corte en la tabla */
+  --col-current-head: #fff4ea;
+  --col-current-hover: #fdf3ea;
+  --sticky-shade: rgba(16, 16, 18, 0.06);
+  --skel-shine: #ebebe8;
+  --code-bg: rgba(16, 16, 18, 0.06);
+  --tip-bg: #0b0b0c; /* tooltips de las gráficas */
+  --tip-text: #ffffff;
+  --seg-other: #b9b9bf; /* "Otros": neutro, no compite con los colores de los segmentos */
+  --bar-rest: #d6d6db;
+  --banner-warn-border: #f6dfb3;
+  --banner-warn-text: #6b4204;
+  --banner-info-border: #d6e4f8;
+  --banner-info-text: #183f73;
+  --banner-danger-border: #f6d0cb;
+  --banner-danger-text: #7a1810;
+
   /* Estados (con icono y texto, nunca solo color) */
   --pos: #137333;
   --pos-bg: #e9f6ee;
@@ -81,4 +102,95 @@
   --rail-w: 68px;
   --page-pad: 32px;
   --content-max: 1400px;
+}
+
+/* Modo oscuro (botón de la barra superior; se guarda en el navegador). Superficies del mismo tono cálido, un paso de
+   diferencia entre capas; el naranja de la marca se mantiene y su versión de texto se aclara para leerse sobre oscuro.
+   Paleta de segmentos: los mismos ocho tonos con sus pasos para fondo oscuro, validados contra #18181b (banda de
+   luminosidad, separación con daltonismo y contraste ≥ 3:1). */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --brand-hover: #ff7d24;
+  --brand-press: #e85f00;
+  --brand-soft: rgba(255, 105, 0, 0.14);
+  --brand-ring: rgba(255, 105, 0, 0.38);
+  --brand-text: #ff9a52;
+  --ink: #f4f4f5;
+
+  --canvas: #0f0f11;
+  --surface: #18181b;
+  --surface-2: #1c1c20;
+  --surface-3: #26262b;
+  --hover: #212125;
+  --border: #2d2d33;
+  --border-strong: #3c3c43;
+  --divider: #25252a;
+
+  --text: #ececef;
+  --text-2: #c3c3c9;
+  --text-3: #9c9ca4;
+  --text-4: #6f6f78;
+
+  --border-hover: #4b4b53;
+  --picked-border: rgba(255, 105, 0, 0.45);
+  --picked-bg: rgba(255, 105, 0, 0.08);
+  --col-current: rgba(255, 105, 0, 0.05);
+  --col-current-head: rgba(255, 105, 0, 0.12);
+  --col-current-hover: rgba(255, 105, 0, 0.09);
+  --sticky-shade: rgba(0, 0, 0, 0.4);
+  --skel-shine: #303036;
+  --code-bg: rgba(255, 255, 255, 0.08);
+  --tip-bg: #2f2f35;
+  --tip-text: #f4f4f5;
+  --seg-other: #8b8b93;
+  --bar-rest: #3a3a41;
+  --banner-warn-border: rgba(245, 158, 11, 0.32);
+  --banner-warn-text: #fcd9a0;
+  --banner-info-border: rgba(96, 165, 250, 0.32);
+  --banner-info-text: #c9ddfb;
+  --banner-danger-border: rgba(248, 113, 113, 0.32);
+  --banner-danger-text: #fecaca;
+
+  --pos: #4ade80;
+  --pos-bg: rgba(34, 197, 94, 0.14);
+  --pos-mark: #22c55e;
+  --neg: #f87171;
+  --neg-bg: rgba(248, 113, 113, 0.14);
+  --neg-mark: #ef4444;
+  --warn: #fbbf24;
+  --warn-bg: rgba(245, 158, 11, 0.12);
+  --info: #60a5fa;
+  --info-bg: rgba(96, 165, 250, 0.12);
+
+  --chart-grid: #2a2a30;
+  --chart-axis: #3c3c43;
+  --chart-label: #8b8b93;
+  --series-wash: rgba(255, 105, 0, 0.16);
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --cat-4: #c98500;
+  --cat-5: #d55181;
+  --cat-6: #008300;
+  --cat-7: #9085e9;
+  --cat-8: #e66767;
+
+  --side-border: rgba(255, 255, 255, 0.1);
+
+  --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -8px rgba(0, 0, 0, 0.65);
+  --shadow-drawer: -24px 0 48px -24px rgba(0, 0, 0, 0.7);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme="dark"] .btn--danger {
+  color: #1f0606; /* texto oscuro sobre el rojo aclarado del modo oscuro */
+}
+
+/* Al cambiar de modo, los colores pasan suave (sin animar al cargar la página) */
+:root.theme-anim,
+:root.theme-anim *,
+:root.theme-anim *::before,
+:root.theme-anim *::after {
+  transition: background-color 220ms ease, border-color 220ms ease, color 220ms ease, fill 220ms ease !important;
 }

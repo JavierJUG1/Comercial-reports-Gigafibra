@@ -1,0 +1,74 @@
+{
+  "descripcion": "Peticiones de Postman (colección ERPNext API) de las cards comerciales del portal. Los textos entre llaves los reemplaza el backend: {desde}/{hasta} = primer y último día del mes del corte, {hasta_excl} = primer día del mes siguiente, {facturas_desde} = 12 meses antes del mes del corte, {planes_tv} = planes de la tabla del reporte. En facturas_tv, {hasta} es la fecha de hoy: un pago del mes a una factura emitida después (pago anticipado) cuenta en el mes en que entró el dinero.",
+  "postman": {
+    "workspace": "My Workspace",
+    "coleccion": "ERPNext API",
+    "coleccion_id": "37183144-b12ba174-af7c-4f80-a2e5-2106f2c00762"
+  },
+  "item_tv": "Canais de TV",
+  "meses_facturas": 12,
+  "consultas": {
+    "leads": {
+      "nombre": "GET Lista Leads convertidos del mes (Comercial reports)",
+      "peticion_id": "37183144-66099feb-1049-abfc-c0b4-452399ab3673",
+      "ruta": "/api/resource/Lead",
+      "parametros": {
+        "fields": ["name", "status", "custom_activation_date", "custom_subscription", "custom_planos.plan as plan"],
+        "filters": [["status", "=", "Converted"], ["custom_activation_date", ">=", "{desde} 00:00:00"],
+                    ["custom_activation_date", "<", "{hasta_excl} 00:00:00"]],
+        "limit_page_length": 0,
+        "order_by": "custom_activation_date asc"
+      }
+    },
+    "pagos": {
+      "nombre": "GET Lista Payment Entries del mes con facturas (Comercial reports)",
+      "peticion_id": "37183144-006cdab5-c5a5-7c35-9cda-28bea0e1b5f9",
+      "ruta": "/api/resource/Payment Entry",
+      "parametros": {
+        "fields": ["name", "posting_date", "references.reference_doctype as reference_doctype",
+                   "references.reference_name as reference_name", "references.allocated_amount as allocated_amount"],
+        "filters": [["docstatus", "=", 1], ["payment_type", "=", "Receive"], ["posting_date", ">=", "{desde}"],
+                    ["posting_date", "<=", "{hasta}"], ["Payment Entry Reference", "reference_doctype", "=", "Sales Invoice"]],
+        "limit_page_length": 0,
+        "order_by": "posting_date asc"
+      }
+    },
+    "facturas_tv": {
+      "nombre": "GET Lista Sales Invoices con planes de TV (líneas Canais de TV, Comercial reports)",
+      "peticion_id": "37183144-964139a3-bd10-541d-e708-d6a1436e50f9",
+      "ruta": "/api/resource/Sales Invoice",
+      "parametros": {
+        "fields": ["name", "posting_date", "custom_subscription", "is_return", "grand_total", "rounded_total",
+                   "items.idx as item_idx", "items.net_amount as net_amount"],
+        "filters": [["docstatus", "=", 1], ["posting_date", ">=", "{facturas_desde}"], ["posting_date", "<=", "{hasta}"],
+                    ["Sales Invoice Item", "item_code", "=", "{item_tv}"]],
+        "limit_page_length": 0,
+        "order_by": "posting_date asc"
+      }
+    },
+    "suscripciones_tv": {
+      "nombre": "GET Lista Subscriptions con planes de TV (plan por suscripción, Comercial reports)",
+      "peticion_id": "37183144-55e70ca3-57b9-404b-566b-ddcddf99ec69",
+      "ruta": "/api/resource/Subscription",
+      "parametros": {
+        "fields": ["name", "status", "plans.plan as plan", "plans.idx as plan_idx"],
+        "filters": [["Subscription Plan Detail", "plan", "in", "{planes_tv}"]],
+        "limit_page_length": 0,
+        "order_by": "`tabSubscription`.`name` asc"
+      }
+    },
+    "historial_planes": {
+      "nombre": "GET Lista Versiones de Subscription con cambios de planes (Comercial reports)",
+      "peticion_id": "37183144-84f26d2e-c540-ab6c-e260-f59f5c228c09",
+      "ruta": "/api/resource/Version",
+      "lote": 100,
+      "parametros": {
+        "fields": ["docname", "creation", "data"],
+        "filters": [["ref_doctype", "=", "Subscription"], ["docname", "in", "{suscripciones}"],
+                    ["data", "like", "%\"plans\"%"]],
+        "limit_page_length": 0,
+        "order_by": "creation asc"
+      }
+    }
+  }
+}

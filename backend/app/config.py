@@ -67,6 +67,12 @@ class Settings:
     ERPNEXT_API_SECRET = _env("ERPNEXT_API_SECRET")
     ERPNEXT_TIMEOUT = float(_env("ERPNEXT_TIMEOUT", "300") or 300)
     CONSULTA_FILE = _path("CONSULTA_FILE", BASE_DIR / "config" / "consulta_postman.json")
+    # Cards comerciales (leads convertidos, ingresos por plan de TV): peticiones de Postman y cálculo diario
+    CONSULTAS_COMERCIALES_FILE = _path("CONSULTAS_COMERCIALES_FILE", BASE_DIR / "config" / "consultas_comerciales.json")
+    COMERCIAL_AUTO = _bool("COMERCIAL_AUTO", True)  # calcula al arrancar y cada día (independiente de los cortes)
+    COMERCIAL_HOUR = _int("COMERCIAL_HOUR", 6)
+    COMERCIAL_MINUTE = _int("COMERCIAL_MINUTE", 10)
+    COMERCIAL_REFRESH_DAYS = _int("COMERCIAL_REFRESH_DAYS", 5)  # días tras el cierre del mes en que se recalcula
 
     # Reporte
     REPORT_DIR = _path("REPORT_DIR", BASE_DIR / "data" / "reporte")

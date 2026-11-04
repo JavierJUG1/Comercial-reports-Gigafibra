@@ -76,13 +76,17 @@ export function SegTag({ name, color }: { name: string; color: string }) {
 }
 
 /** Variación con signo, flecha y color. Base cero → "Nuevo" / "Sin base comparable" (nunca un % inválido). */
-export function DeltaView({ d, pill, showPct = true, showAbs = true, size }: {
+export function DeltaView({ d, pill, showPct = true, showAbs = true, size, fmt }: {
   d: DeltaT | null | undefined;
   pill?: boolean;
   showPct?: boolean;
   showAbs?: boolean;
   size?: "sm";
+  /** Formato del valor absoluto sin signo (p. ej. pesos abreviados); por defecto, entero */
+  fmt?: (n: number) => string;
 }) {
+  const signed = (n: number | null) =>
+    n === null ? "—" : !fmt ? fmtSigned(n) : n === 0 ? fmt(0) : (n > 0 ? "+" : "−") + fmt(Math.abs(n));
   if (!d || d.kind === "no_data") {
     return <span className={`delta delta--no_data${pill ? " delta--pill" : ""}`} title="Sin dato comparable">—</span>;
   }
@@ -95,7 +99,7 @@ export function DeltaView({ d, pill, showPct = true, showAbs = true, size }: {
     <span className={`delta delta--${d.kind}${pill ? " delta--pill" : ""}`} title={title}
       style={size === "sm" ? { fontSize: 12 } : undefined}>
       <Icon aria-hidden />
-      {showAbs && <span>{d.kind === "flat" && d.abs === 0 ? "0" : fmtSigned(d.abs)}</span>}
+      {showAbs && <span>{d.kind === "flat" && d.abs === 0 ? "0" : signed(d.abs)}</span>}
       {showPct && pct && d.kind !== "flat" && <span className="delta__pct">{showAbs ? `· ${pct}` : pct}</span>}
       {showPct && d.kind === "new" && <span className="delta__pct">{showAbs ? "· Nuevo" : "Nuevo"}</span>}
       <span className="sr-only">{d.kind === "up" ? "aumento" : d.kind === "down" ? "disminución" : ""}</span>
@@ -209,7 +213,7 @@ export function Pick({ label, value, options, onChange, placeholder = "Todos", a
   onChange: (v: string) => void;
   placeholder?: string;
   align?: "right";
-  size?: "lg";
+  size?: "lg" | "sm";
   icon?: ReactNode;
   highlight?: boolean; // resalta el control cuando el filtro se aparta del valor por defecto
 }) {
@@ -252,7 +256,7 @@ export function Pick({ label, value, options, onChange, placeholder = "Todos", a
   let lastGroup: string | undefined;
   return (
     <div className="pick" ref={root} onKeyDown={onKey}>
-      <button type="button" className={`pick__btn${size ? " pick__btn--lg" : ""}${(highlight ?? !!value) ? " is-set" : ""}`}
+      <button type="button" className={`pick__btn${size ? ` pick__btn--${size}` : ""}${(highlight ?? !!value) ? " is-set" : ""}`}
         aria-haspopup="listbox" aria-expanded={open} aria-controls={listId} onClick={() => setOpen((o) => !o)}>
         {icon}
         <span className="pick__label">{label}</span>
@@ -286,29 +290,32 @@ export function Pick({ label, value, options, onChange, placeholder = "Todos", a
 }
 
 /** Selección múltiple con casillas (clasificación, segmento). */
-export function MultiPick({ label, values, options, onChange, renderOption }: {
+export function MultiPick({ label, values, options, onChange, renderOption, placeholder = "Todos", size, align }: {
   label: string;
   values: string[];
   options: string[];
   onChange: (v: string[]) => void;
   renderOption?: (o: string) => ReactNode;
+  placeholder?: string;
+  size?: "sm";
+  align?: "right";
 }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useClickOutside(useMemo(() => [root], []), close, open);
   const toggle = (o: string) => onChange(values.includes(o) ? values.filter((v) => v !== o) : [...values, o]);
-  const text = values.length === 0 ? "Todos" : values.length === 1 ? values[0] : `${values.length} seleccionados`;
+  const text = values.length === 0 ? placeholder : values.length === 1 ? values[0] : `${values.length} seleccionados`;
   return (
     <div className="pick" ref={root}>
-      <button type="button" className={`pick__btn${values.length ? " is-set" : ""}`} aria-haspopup="listbox"
-        aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+      <button type="button" className={`pick__btn${size ? ` pick__btn--${size}` : ""}${values.length ? " is-set" : ""}`}
+        aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <span className="pick__label">{label}</span>
         <span className="pick__value">{text}</span>
         <ChevronDown aria-hidden />
       </button>
       {open && (
-        <div className="pop" role="listbox" aria-multiselectable aria-label={label}>
+        <div className={`pop${align === "right" ? " pop--right" : ""}`} role="listbox" aria-multiselectable aria-label={label}>
           {options.length === 0 && <div className="opt muted">Sin opciones</div>}
           {options.map((o) => {
             const sel = values.includes(o);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo-giga.png";
+import { SPLASH_DONE } from "../lib/motion";
 
 const KEY = "tva_splash_visto";
 const MIN_MS = 2400; // duración mínima para que la animación se lea completa
@@ -40,6 +41,7 @@ export function BrandSplash({ ready, onDone }: { ready: boolean; onDone: () => v
   }, [minDone, ready, leaving]);
   useEffect(() => {
     if (!leaving) return;
+    window.dispatchEvent(new Event(SPLASH_DONE)); // el contenido empieza sus animaciones mientras la pantalla se retira
     try {
       sessionStorage.setItem(KEY, "1");
     } catch {

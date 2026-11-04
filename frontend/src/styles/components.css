@@ -40,7 +40,7 @@
 }
 .btn--secondary:hover:not(:disabled) {
   background: var(--hover);
-  border-color: #c4c3be;
+  border-color: var(--border-hover);
 }
 .btn--ghost {
   color: var(--text-2);
@@ -110,7 +110,7 @@
   transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease);
 }
 .pick__btn:hover {
-  border-color: #c4c3be;
+  border-color: var(--border-hover);
   background: var(--hover);
 }
 .pick__btn[aria-expanded="true"] {
@@ -118,8 +118,8 @@
   box-shadow: 0 0 0 3px var(--brand-ring);
 }
 .pick__btn.is-set {
-  border-color: #e9c4a6;
-  background: #fffaf6;
+  border-color: var(--picked-border);
+  background: var(--picked-bg);
 }
 .pick__label {
   color: var(--text-3);
@@ -140,6 +140,16 @@
 .pick__btn--lg {
   height: 36px;
   font-size: 14px;
+}
+.pick__btn--sm {
+  height: 28px;
+  gap: 5px;
+  padding: 0 7px 0 9px;
+  font-size: 12.5px;
+}
+.pick__btn--sm > svg {
+  width: 14px;
+  height: 14px;
 }
 .pick__count {
   min-width: 18px;
@@ -681,24 +691,24 @@ textarea.input {
 }
 .banner--warning {
   background: var(--warn-bg);
-  border-color: #f6dfb3;
-  color: #6b4204;
+  border-color: var(--banner-warn-border);
+  color: var(--banner-warn-text);
 }
 .banner--warning > svg {
   color: var(--warn);
 }
 .banner--info {
   background: var(--info-bg);
-  border-color: #d6e4f8;
-  color: #183f73;
+  border-color: var(--banner-info-border);
+  color: var(--banner-info-text);
 }
 .banner--info > svg {
   color: var(--info);
 }
 .banner--danger {
   background: var(--neg-bg);
-  border-color: #f6d0cb;
-  color: #7a1810;
+  border-color: var(--banner-danger-border);
+  color: var(--banner-danger-text);
 }
 .banner--danger > svg {
   color: var(--neg);
@@ -815,7 +825,7 @@ textarea.input {
   bottom: 0;
   width: 12px;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(16, 16, 18, 0.06), transparent);
+  background: linear-gradient(90deg, var(--sticky-shade), transparent);
 }
 .tbl .gap-before {
   box-shadow: inset 1px 0 0 0 transparent;
@@ -903,14 +913,14 @@ textarea.input {
 }
 .tbl th.is-current,
 .tbl td.is-current {
-  background: #fffaf5;
+  background: var(--col-current);
 }
 .tbl thead th.is-current {
-  background: #fff4ea;
+  background: var(--col-current-head);
   color: var(--brand-text);
 }
 .tbl tbody tr:hover td.is-current {
-  background: #fdf3ea;
+  background: var(--col-current-hover);
 }
 .pager {
   display: flex;
@@ -1325,7 +1335,7 @@ button.barlist__row:hover {
 
 .skel {
   border-radius: var(--r-sm);
-  background: linear-gradient(90deg, var(--surface-3) 0, #ebebe8 120px, var(--surface-3) 240px) var(--surface-3);
+  background: linear-gradient(90deg, var(--surface-3) 0, var(--skel-shine) 120px, var(--surface-3) 240px) var(--surface-3);
   background-size: 640px 100%;
   animation: shimmer 1.3s linear infinite;
 }

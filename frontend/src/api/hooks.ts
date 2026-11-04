@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./client";
-import type { Corte, Meta, Reporte } from "./types";
+import type { Comercial, Corte, Meta, Reporte } from "./types";
 
 export function useMeta(enabled = true) {
   return useQuery({
@@ -15,6 +15,17 @@ export function useMeta(enabled = true) {
 
 export function useReporte(enabled = true) {
   return useQuery({ queryKey: ["reporte"], queryFn: () => api<Reporte>("/api/reporte"), staleTime: 60_000, enabled });
+}
+
+/** Leads convertidos e ingresos por plan de TV por mes. Mientras el backend calcula, se consulta cada 4 s. */
+export function useComercial(enabled = true) {
+  return useQuery({
+    queryKey: ["comercial"],
+    queryFn: () => api<Comercial>("/api/comercial"),
+    staleTime: 60_000,
+    enabled,
+    refetchInterval: (q) => (q.state.data?.en_curso ? 4000 : false),
+  });
 }
 
 export function useCortes(poll: boolean) {

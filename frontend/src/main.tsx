@@ -9,8 +9,12 @@ import "./styles/layout.css";
 import "./styles/components.css";
 import "./styles/pages.css";
 import "./styles/splash.css";
+import "./styles/insights.css";
 import { App } from "./App";
 import { ToastProvider } from "./components/ui";
+import { applyTheme, storedTheme } from "./lib/theme";
+
+applyTheme(storedTheme());
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -50,6 +50,50 @@
   color: #ff9a52;
   white-space: nowrap;
 }
+.topbar__end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* Botón del modo oscuro (la barra es negra en ambos modos) */
+.topbar__theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 12px 0 8px;
+  border: 1px solid var(--side-border);
+  border-radius: var(--r-pill);
+  color: var(--side-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.topbar__theme:hover {
+  background: var(--side-hover);
+  color: var(--side-text-strong);
+}
+.topbar__theme:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.topbar__theme-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+.topbar__theme.is-dark .topbar__theme-icon {
+  background: rgba(255, 105, 0, 0.2);
+  color: #ffb27a;
+}
+.topbar__theme-icon svg {
+  width: 13px;
+  height: 13px;
+}
 .topbar__user {
   display: flex;
   align-items: center;
@@ -174,6 +218,12 @@
     height: 18px;
   }
   .topbar__name {
+    display: none;
+  }
+  .topbar__theme {
+    padding: 0 6px;
+  }
+  .topbar__theme-text {
     display: none;
   }
   .page {
