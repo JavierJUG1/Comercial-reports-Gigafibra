@@ -9,6 +9,7 @@ El corte es AUTOMÁTICO (último día de cada mes, 23:50). Estos comandos son pa
     .venv\\Scripts\\python -m scripts.reporte desarrollo  # corte de prueba con observación (no toca el Excel oficial)
     .venv\\Scripts\\python -m scripts.reporte incluir 2026-11-03-desarrollo.json --periodo 2026-10 --observacion "…"
                                                         # incluye un .json ya guardado como corte de ese mes
+    .venv\\Scripts\\python -m scripts.reporte comercial   # cards comerciales de los meses que faltan (--periodo, --rehacer)
 """
 from __future__ import annotations
 
@@ -110,6 +111,31 @@ def cmd_incluir(args: argparse.Namespace) -> int:
     return 0
 
 
+def _money(v: float) -> str:
+    return "$ " + f"{v:,.0f}".replace(",", ".")
+
+
+def cmd_comercial(args: argparse.Namespace) -> int:
+    from app import comercial
+    t = time.monotonic()
+    periods = args.periodo or None
+    res = comercial.ensure(periods, force=args.rehacer)
+    if res["error"]:
+        print(f"✘ {res['error']}", file=sys.stderr)
+        return 1
+    print(f"✔ {len(res['calculados'])} mes(es) calculado(s) en {time.monotonic() - t:.0f}s"
+          + (f"; {len(res['omitidos'])} ya definitivos" if res["omitidos"] else ""))
+    for p, s in comercial.summaries().items():
+        if periods and p not in periods:
+            continue
+        ld, ing = s["leads"], s["ingresos"]
+        top = next(iter(ing["por_plan"].items()), (None, {"ingreso": 0}))
+        print(f"  {p}  leads {_fmt(ld['convertidos']):>5} (TV {_fmt(ld['con_tv']):>4})  ingresos TV {_money(ing['total']):>15}"
+              f"  · {_fmt(ing['facturas'])} facturas · {'definitivo' if s.get('definitivo') else 'provisional'}"
+              + (f"  · mayor: {top[0]}" if top[0] else ""))
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -129,6 +155,10 @@ def main(argv: list[str] | None = None) -> int:
     i.add_argument("--periodo", required=True, help="Mes del reporte, AAAA-MM")
     i.add_argument("--observacion", required=True, help="Nota visible en Cortes generados")
     i.set_defaults(fn=cmd_incluir)
+    c = sub.add_parser("comercial", help="Calcula las cards comerciales (leads convertidos e ingresos por plan de TV)")
+    c.add_argument("--periodo", action="append", help="Mes AAAA-MM (se puede repetir); por defecto, los que faltan")
+    c.add_argument("--rehacer", action="store_true", help="Recalcula aunque el mes ya sea definitivo")
+    c.set_defaults(fn=cmd_comercial)
     args = ap.parse_args(argv)
     return args.fn(args)
 

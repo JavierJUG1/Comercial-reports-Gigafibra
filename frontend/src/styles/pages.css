@@ -277,7 +277,7 @@ code {
   font: 12.5px ui-monospace, "Cascadia Code", Consolas, monospace;
   padding: 1px 5px;
   border-radius: 4px;
-  background: rgba(16, 16, 18, 0.06);
+  background: var(--code-bg);
 }
 
 /* ============================================================ login */

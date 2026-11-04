@@ -13,12 +13,13 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.date import DateTrigger
 
-from . import report
+from . import comercial, report
 from .config import settings
 
 log = logging.getLogger("tva.scheduler")
 _scheduler: BackgroundScheduler | None = None
 JOB_ID = "corte_mensual"
+JOB_COMERCIAL = "indicadores_comerciales"
 
 
 def _cron() -> CronTrigger:
@@ -40,6 +41,8 @@ def _run(trigger: str, retry: int = 0) -> None:
     try:
         res = report.take_cut(trigger, fecha=fecha, periodo=periodo)
         log.info("Corte (%s): %s", trigger, res.get("mensaje"))
+        if res.get("estado") == "exitosa" and settings.COMERCIAL_AUTO:
+            comercial.ensure_background()  # el mes nuevo ya tiene corte: sus cards comerciales
     except report.ReportError as exc:
         log.warning("Corte (%s) falló: %s", trigger, exc.message)
         if exc.code in ("retryable", "error", "locked", "excel") and retry < settings.SYNC_RETRY_MAX and _scheduler:
@@ -66,18 +69,27 @@ def catch_up() -> None:
 
 
 def start() -> BackgroundScheduler | None:
+    """Corte mensual (SCHEDULER_ENABLED) e indicadores comerciales diarios (COMERCIAL_AUTO, solo lectura)."""
     global _scheduler
-    if not settings.SCHEDULER_ENABLED or _scheduler is not None:
+    if not (settings.SCHEDULER_ENABLED or settings.COMERCIAL_AUTO) or _scheduler is not None:
         return _scheduler
     sched = BackgroundScheduler(timezone=settings.TIMEZONE)
-    sched.add_job(_monthly_job, _cron(), id=JOB_ID, replace_existing=True, misfire_grace_time=6 * 3600,
-                  coalesce=True, max_instances=1)
+    if settings.SCHEDULER_ENABLED:
+        sched.add_job(_monthly_job, _cron(), id=JOB_ID, replace_existing=True, misfire_grace_time=6 * 3600,
+                      coalesce=True, max_instances=1)
+    if settings.COMERCIAL_AUTO:
+        sched.add_job(comercial.ensure_background, CronTrigger(hour=settings.COMERCIAL_HOUR, minute=settings.COMERCIAL_MINUTE,
+                                                                timezone=settings.TIMEZONE),
+                      id=JOB_COMERCIAL, replace_existing=True, misfire_grace_time=6 * 3600, coalesce=True)
+        sched.add_job(comercial.ensure_background, DateTrigger(run_date=report.now() + timedelta(seconds=20)),
+                      id="indicadores_arranque", replace_existing=True)
     sched.start()
     _scheduler = sched
-    log.info("Corte mensual programado; próxima ejecución: %s", next_run())
-    if settings.CATCH_UP_ON_START and report.has_workbook():
-        sched.add_job(catch_up, DateTrigger(run_date=report.now() + timedelta(seconds=10)), id="recuperacion",
-                      replace_existing=True)
+    if settings.SCHEDULER_ENABLED:
+        log.info("Corte mensual programado; próxima ejecución: %s", next_run())
+        if settings.CATCH_UP_ON_START and report.has_workbook():
+            sched.add_job(catch_up, DateTrigger(run_date=report.now() + timedelta(seconds=10)), id="recuperacion",
+                          replace_existing=True)
     return sched
 
 

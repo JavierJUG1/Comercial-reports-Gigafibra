@@ -86,6 +86,38 @@ export interface Libro {
   actualizado: string;
 }
 
+/** Cards comerciales de un mes (leads convertidos e ingresos por plan de TV), calculadas desde ERPNext. */
+export interface ComercialPeriodo {
+  periodo: string;
+  desde: string;
+  hasta: string;
+  calculado: string;
+  /** Fijo: calculado después de COMERCIAL_REFRESH_DAYS días del cierre del mes */
+  definitivo: boolean;
+  leads: {
+    convertidos: number;
+    con_tv: number;
+    por_plan_tv: Record<string, number>;
+    /** Leads TV por combinación de planes de TV (cada lead una vez): el filtro de planes cuenta sin repetir */
+    combinaciones_tv?: { planes: string[]; leads: number }[];
+  };
+  ingresos: {
+    total: number;
+    pagos: number;
+    facturas: number;
+    por_plan: Record<string, { ingreso: number; facturas: number }>;
+    retirado: number;
+    plan_segun: Record<string, number>;
+  };
+}
+
+export interface Comercial {
+  periodos: Record<string, ComercialPeriodo>;
+  en_curso: boolean;
+  error: string | null;
+  regla_dias: number;
+}
+
 export interface Reporte {
   actualizado: string;
   tabla: string;

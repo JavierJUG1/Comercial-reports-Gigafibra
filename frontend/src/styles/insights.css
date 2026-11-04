@@ -1,0 +1,892 @@
+/* Cards de segmentos: "Suscripciones por segmento" y "Segmento con más suscripciones" */
+
+.insights {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+/* Filtro propio de las cards (año y mes del corte) */
+.insights__bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: -4px;
+  opacity: 0;
+  transition: opacity 420ms var(--ease);
+}
+.insights.is-in .insights__bar {
+  opacity: 1;
+}
+.insights__label {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.insights__label .muted {
+  font-weight: 500;
+}
+.insights__filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.insights__reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--brand-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  animation: ins-tip 160ms var(--ease);
+}
+.insights__reset:hover {
+  background: var(--brand-soft);
+}
+.insights__reset svg {
+  width: 13px;
+  height: 13px;
+}
+
+.insight {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 16px 18px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 520ms var(--ease), transform 620ms var(--ease), border-color 160ms var(--ease),
+    box-shadow 160ms var(--ease);
+}
+.insights.is-in .insight {
+  opacity: 1;
+  transform: none;
+}
+/* Entrada escalonada: --d = orden de la card */
+.insights.is-in .insight {
+  transition-delay: calc(var(--d, 0) * 80ms), calc(var(--d, 0) * 80ms), 0ms, 0ms;
+}
+.insight:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-xs);
+}
+
+.insight__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.insight__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+.insight__icon svg {
+  width: 16px;
+  height: 16px;
+}
+/* Trofeo: un pulso único al aparecer */
+.insight__icon--trophy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 var(--brand-ring);
+  opacity: 0;
+}
+.insights.is-in .insight__icon--trophy::after {
+  animation: ins-pulse 1300ms var(--ease) 1500ms 1;
+}
+.insight__titles {
+  min-width: 0;
+}
+/* Acciones de la card (descarga de datos): a la derecha de la cabecera */
+.insight__actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 6px;
+  margin-left: auto;
+  align-self: flex-start;
+}
+.insight__dl {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 140ms var(--ease), border-color 140ms var(--ease), background 140ms var(--ease);
+}
+.insight__dl:hover,
+.insight__dl.is-open {
+  color: var(--brand-text);
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+.insight__dl svg {
+  width: 15px;
+  height: 15px;
+}
+/* Opciones del menú de descarga: título y descripción en líneas separadas */
+.menu-item .menu-item__title,
+.menu-item .menu-item__desc {
+  display: block;
+}
+.menu-item .menu-item__desc {
+  margin-top: 1px;
+}
+/* En oscuro, los tooltips de las gráficas llevan un borde suave para separarse de la card */
+:root[data-theme="dark"] .pie__tip,
+:root[data-theme="dark"] .trend__tip,
+:root[data-theme="dark"] .lcols__tip {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), var(--shadow-pop);
+}
+.menu-note {
+  margin: 4px 6px 4px;
+  padding: 8px 6px 2px;
+  border-top: 1px solid var(--divider);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-3);
+  white-space: normal;
+}
+/* Filtro propio de la card (planes de TV en Leads TV) */
+.insight__tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: -4px;
+}
+.opt-plan {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.insight__title {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.insight__sub {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 16px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.insight__empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.insight__foot {
+  margin: auto 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--divider);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.insight__foot b {
+  color: var(--text);
+  font-weight: 600;
+}
+.insight__foot .seg-sw {
+  width: 8px;
+  height: 8px;
+  vertical-align: 0;
+}
+.insight__foot--split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  overflow: visible; /* si no, al enfocar el botón el navegador desplaza el pie y corta el texto */
+}
+.insight__foot--split > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.insight__link {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 5px;
+  height: 24px;
+  margin: -4px -6px -4px 0;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--brand-text);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.insight__link:hover {
+  background: var(--brand-soft);
+}
+.insight__link:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.insight__link svg {
+  width: 13px;
+  height: 13px;
+}
+/* "Provisional": el mes aún se recalcula (pagos e instalaciones registrados con fecha del mes) */
+.insight__tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  vertical-align: 1px;
+  cursor: help;
+}
+.insight__empty--busy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.insight__empty--busy svg {
+  width: 15px;
+  height: 15px;
+  animation: spin 0.9s linear infinite;
+}
+.insight__skel {
+  display: grid;
+  gap: 10px;
+}
+.insight__skel span {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--surface-3) 0, var(--skel-shine) 120px, var(--surface-3) 240px) var(--surface-3);
+  background-size: 640px 100%;
+  animation: shimmer 1.3s linear infinite;
+}
+.insight__skel span:first-child {
+  width: 40%;
+  height: 28px;
+}
+.insight__skel span:last-child {
+  width: 70%;
+}
+
+/* Recaudo por plan de TV: total del mes + una fila por plan (color del segmento del plan) */
+.rev__head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.rev {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* Una línea: muestra · plan · barra · valor · % (en móvil, la barra baja a una segunda línea).
+   Los datos comerciales llegan después que el reporte: la entrada es una animación al montar (no una transición),
+   así se ve aunque las filas aparezcan cuando las cards ya están visibles. */
+.rev__row {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1.7fr) minmax(48px, 1fr) 104px 50px;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0 -6px;
+  padding: 5px 6px;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 18px;
+  opacity: 0;
+  transition: background 140ms var(--ease);
+}
+.rev__val {
+  text-align: right;
+}
+.insights.is-in .rev__row {
+  opacity: 1;
+  animation: ins-rise 420ms var(--ease) backwards;
+  animation-delay: calc(300ms + var(--k, 0) * 70ms);
+}
+.rev__row:hover {
+  background: var(--hover);
+}
+.rev__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text);
+}
+.rev__val {
+  font-weight: 600;
+  color: var(--ink);
+}
+.rev__pct {
+  text-align: right;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+.rev__track {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.rev__bar {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transform-origin: left center;
+  transition: transform 700ms cubic-bezier(0.65, 0, 0.25, 1);
+}
+.insights.is-in .rev__bar {
+  animation: ins-grow-x 900ms cubic-bezier(0.65, 0, 0.25, 1) backwards;
+  animation-delay: calc(380ms + var(--k, 0) * 70ms);
+}
+
+/* Columnas de 12 meses. Leads: con TV abajo (acento), sin TV arriba (neutro). Recaudo: total del mes (acento). */
+.lcols {
+  display: grid;
+  gap: 6px;
+}
+/* Leads: las columnas ocupan el alto que deja la card de al lado */
+.lcols--grow {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.lcols--grow .lcols__plot {
+  flex: 1;
+  height: auto;
+  min-height: 112px;
+}
+.lcols__legend.lcols__legend--start {
+  justify-content: flex-start;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.lcols__tv:only-child {
+  border-radius: 4px 4px 0 0;
+}
+.lcols__legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  font-size: 11.5px;
+  line-height: 14px;
+  color: var(--text-3);
+}
+.lcols__legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.lcols__sw {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--lcols-rest);
+}
+.lcols__sw--tv {
+  background: var(--brand);
+}
+.lcols__plot {
+  --lcols-rest: var(--bar-rest);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  gap: 6px;
+  height: 112px;
+  padding-top: 2px;
+  border-bottom: 1px solid var(--border);
+}
+.lcols__legend {
+  --lcols-rest: var(--bar-rest);
+}
+.lcols__col {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  cursor: default;
+  transition: opacity 160ms var(--ease);
+}
+.lcols__col.is-dim {
+  opacity: 0.45;
+}
+.lcols__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  min-height: 0;
+  opacity: 0.55;
+  transition: height 600ms cubic-bezier(0.65, 0, 0.25, 1), opacity 160ms var(--ease);
+}
+.insights.is-in .lcols__stack {
+  animation: ins-grow-y 800ms cubic-bezier(0.65, 0, 0.25, 1) backwards;
+  animation-delay: calc(380ms + var(--i, 0) * 40ms);
+}
+.lcols__col.is-sel .lcols__stack,
+.lcols__col:hover .lcols__stack {
+  opacity: 1;
+}
+.lcols__rest,
+.lcols__tv {
+  display: block;
+  flex-basis: 0;
+  min-height: 2px;
+}
+.lcols__rest {
+  border-radius: 4px 4px 0 0;
+  background: var(--lcols-rest);
+}
+.lcols__tv {
+  background: var(--brand);
+}
+.lcols__tv:first-child {
+  border-radius: 4px 4px 0 0;
+}
+.lcols__tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transform: translateX(-50%);
+  padding: 4px 7px;
+  border-radius: 7px;
+  background: var(--tip-bg);
+  color: var(--tip-text);
+  font-size: 11.5px;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-pop);
+  animation: ins-tip 120ms var(--ease);
+}
+.lcols__tip span {
+  opacity: 0.72;
+}
+.lcols__tip.is-start {
+  left: 0;
+  transform: none;
+  animation-name: ins-fade;
+}
+.lcols__tip.is-end {
+  left: auto;
+  right: 0;
+  transform: none;
+  animation-name: ins-fade;
+}
+.lcols__axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  line-height: 14px;
+  color: var(--text-3);
+}
+
+/* Gráfico de torta + lista */
+.pie-layout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 22px;
+}
+.pie {
+  position: relative;
+  flex-shrink: 0;
+}
+.pie svg {
+  display: block;
+  overflow: visible;
+}
+.pie__sweep {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1100ms cubic-bezier(0.65, 0, 0.25, 1) 150ms;
+}
+.pie__sweep.is-in {
+  stroke-dashoffset: 0;
+}
+.pie__slice {
+  stroke: var(--surface);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  cursor: default;
+  transition: transform 220ms var(--ease), opacity 160ms var(--ease);
+}
+.pie__slice.is-dim {
+  opacity: 0.3;
+}
+.pie__tip {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform: translate(-50%, calc(-100% - 10px));
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: var(--tip-bg);
+  color: var(--tip-text);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-pop);
+  animation: ins-fade 120ms var(--ease);
+}
+.pie__tip b {
+  font-weight: 600;
+}
+
+.trend__tip {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform: translateX(-50%);
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: var(--tip-bg);
+  color: var(--tip-text);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow-pop);
+  animation: ins-tip 120ms var(--ease);
+}
+
+/* Lista: muestra + nombre + suscripciones + participación */
+.seglist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 22px;
+  row-gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.seglist--stack {
+  grid-template-columns: minmax(0, 1fr);
+}
+.seglist__row {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto 54px;
+  align-items: center;
+  gap: 8px;
+  margin: 0 -6px;
+  padding: 5px 6px;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 18px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 360ms var(--ease), transform 420ms var(--ease), background 140ms var(--ease);
+}
+.insights.is-in .seglist__row {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(380ms + var(--k, 0) * 80ms), calc(380ms + var(--k, 0) * 80ms), 0ms;
+}
+.insights.is-in .seglist__row.is-dim {
+  opacity: 0.42;
+  transition-delay: 0ms;
+}
+.seglist__row:hover {
+  background: var(--hover);
+}
+.seg-sw {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.seg-sw--lg {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+.seglist__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text);
+}
+.seglist__count {
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+.seglist__pct {
+  text-align: right;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Segmento con más suscripciones */
+.leader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+}
+.leader__main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.leader__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.leader__value {
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.leader__value small {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text-3);
+}
+.leader__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 12.5px;
+  line-height: 17px;
+  color: var(--text-3);
+}
+.leader__meta b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Tendencia animada */
+.trend {
+  position: relative;
+  flex-shrink: 0;
+}
+.trend svg {
+  display: block;
+  overflow: visible;
+}
+.trend__line {
+  fill: none;
+  stroke: var(--text-4);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1250ms cubic-bezier(0.65, 0, 0.35, 1) 380ms;
+}
+.trend__line.is-drawn {
+  stroke-dashoffset: 0;
+}
+.trend__end {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 1500ms;
+}
+.trend__end.is-in {
+  transform: scale(1);
+}
+.trend__guide {
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+.trend__tip {
+  bottom: calc(100% + 4px);
+  font-size: 11.5px;
+  padding: 4px 7px;
+}
+.trend__tip span {
+  opacity: 0.72;
+}
+
+@keyframes ins-pulse {
+  0% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 var(--brand-ring);
+  }
+  100% {
+    opacity: 0;
+    box-shadow: 0 0 0 9px rgba(255, 105, 0, 0);
+  }
+}
+@keyframes ins-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes ins-rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@keyframes ins-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes ins-grow-y {
+  from {
+    height: 0;
+  }
+}
+@keyframes ins-tip {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 3px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .insights {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .insights {
+    gap: 12px;
+  }
+  .insight {
+    padding: 14px 14px 12px;
+  }
+  .pie-layout {
+    gap: 14px;
+  }
+  .seglist__row {
+    grid-template-columns: 10px minmax(0, 1fr) auto 46px;
+    gap: 7px;
+  }
+  .leader__value {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .insight__foot {
+    white-space: normal;
+  }
+  .insight__foot--split {
+    align-items: flex-start;
+  }
+  /* En móvil: plan, valor y % arriba; la barra en una segunda línea. El nombre completo del plan (p. ej. "1 SetBox"
+     vs "2 SetBox") importa más que una sola línea. */
+  .rev__row {
+    grid-template-columns: 10px minmax(0, 1fr) auto 44px;
+    grid-template-areas: "sw name val pct" ". bar bar bar";
+    align-items: start;
+    gap: 5px 7px;
+  }
+  .rev__row > .seg-sw {
+    grid-area: sw;
+    margin-top: 4px;
+  }
+  .rev__name {
+    grid-area: name;
+    white-space: normal;
+  }
+  .rev__val {
+    grid-area: val;
+  }
+  .rev__pct {
+    grid-area: pct;
+  }
+  .rev__track {
+    grid-area: bar;
+  }
+  .insight__sub {
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insight,
+  .rev__row,
+  .rev__bar,
+  .lcols__stack,
+  .seglist__row,
+  .pie__sweep,
+  .pie__slice,
+  .trend__line,
+  .trend__end {
+    transition: none !important;
+  }
+  .insights.is-in .insight__icon--trophy::after,
+  .insights.is-in .rev__row,
+  .insights.is-in .rev__bar,
+  .insights.is-in .lcols__stack {
+    animation: none;
+  }
+}

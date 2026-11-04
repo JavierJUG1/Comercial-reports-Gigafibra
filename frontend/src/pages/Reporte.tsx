@@ -8,6 +8,8 @@ import { download } from "../api/client";
 import { useCortes, useReporte } from "../api/hooks";
 import type { Columna, Corte, Delta, Meta, PlanFila, Reporte as ReporteT } from "../api/types";
 import { Sparkline } from "../components/charts";
+import { SegmentInsights } from "../components/SegmentInsights";
+import { delta } from "../lib/delta";
 import {
   Badge, Banner, Button, DeltaView, Empty, MultiPick, Panel, Pick, SearchInput, SegTag, Segmented, Skeleton, Switch,
   useToast,
@@ -16,12 +18,6 @@ import { MONTHS, MONTHS_SHORT, fmtDate, fmtDateTime, fmtDuration, fmtInt, fmtMon
 import { useDebounced, useMedia, useSegmentColors, useTitle } from "../lib/hooks";
 
 /* ------------------------------------------------------------------ utilidades */
-/** Variación entre dos cortes. Desde 0 también es una subida normal (0 → 3 = +3); sin porcentaje sobre base cero. */
-function delta(prev: number | null | undefined, cur: number | null | undefined): Delta {
-  if (prev === null || prev === undefined || cur === null || cur === undefined) return { abs: null, pct: null, kind: "no_data" };
-  const diff = cur - prev;
-  return { abs: diff, pct: prev === 0 ? null : (diff / prev) * 100, kind: diff > 0 ? "up" : diff < 0 ? "down" : "flat" };
-}
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 /** "Sep 2026" */
@@ -108,7 +104,7 @@ export function Reporte({ meta }: { meta: Meta }) {
           <p>Suscripciones en estado {meta.estados.join(" + ")} en cada corte, por plan de televisión.</p>
         </div>
         <div className="page-head__actions">
-          <Button variant="secondary" icon={<Download />} onClick={descargarExcel} disabled={!meta.excel.existe} title={nombreDescarga}>
+          <Button variant="primary" icon={<Download />} onClick={descargarExcel} disabled={!meta.excel.existe} title={nombreDescarga}>
             Descargar Excel
           </Button>
         </div>
@@ -154,6 +150,10 @@ export function Reporte({ meta }: { meta: Meta }) {
           <span className="kpi__sub">Todas las suscripciones · reporte: {meta.estados.join(" + ")}</span>
         </div>
       </div>
+
+      {data && data.columnas.length > 0 && (
+        <SegmentInsights data={data} labelOf={(idx) => mesAnio(data.columnas[idx])} />
+      )}
 
       {!data ? (rep.isError ? (
         <Panel><Empty icon={<SearchX />} title="No hay reporte">{(rep.error as Error).message}</Empty></Panel>

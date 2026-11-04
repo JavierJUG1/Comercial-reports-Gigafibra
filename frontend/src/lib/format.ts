@@ -31,6 +31,22 @@ export function fmtMoney(n: number | null | undefined): string {
   return n === null || n === undefined ? "—" : "$ " + money.format(n);
 }
 
+/** Pesos completos sin decimales: "$ 21.800.719". */
+export function fmtPesos(n: number | null | undefined): string {
+  if (n === null || n === undefined) return "—";
+  return (Math.round(n) < 0 ? "−" : "") + "$ " + int.format(Math.abs(Math.round(n)));
+}
+
+const upTo1 = new Intl.NumberFormat("es-CO", { maximumFractionDigits: 1 });
+
+/** Pesos abreviados: "$ 40,9 M", "$ 174,5 mil", "$ 950". */
+export function fmtMoneyShort(n: number | null | undefined): string {
+  if (n === null || n === undefined) return "—";
+  const a = Math.abs(n);
+  const body = a >= 1e6 ? `${upTo1.format(a / 1e6)} M` : a >= 1e3 ? `${upTo1.format(a / 1e3)} mil` : int.format(a);
+  return (n < 0 ? "−" : "") + "$ " + body;
+}
+
 export function fmtCompact(n: number): string {
   return Math.abs(n) < 10000 ? int.format(n) : compact.format(n);
 }

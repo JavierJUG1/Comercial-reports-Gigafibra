@@ -99,6 +99,7 @@ class FakeClient:
 def workdir(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, "REPORT_DIR", tmp_path / "reporte")
     monkeypatch.setattr(settings, "SCHEDULER_ENABLED", False)
+    monkeypatch.setattr(settings, "COMERCIAL_AUTO", False)
     monkeypatch.setattr(settings, "AUTH_MODE", "debug")
     monkeypatch.setattr(settings, "COUNT_STATUSES", ["Active", "Past Due Date"])
     monkeypatch.setattr(settings, "ERPNEXT_API_KEY", "k")

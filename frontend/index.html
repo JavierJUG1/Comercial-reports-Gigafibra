@@ -7,6 +7,12 @@
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Gigafibra TV Analytics</title>
+    <script>
+      // Modo oscuro elegido en este navegador: se aplica antes de pintar (ver src/lib/theme.ts)
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem("tva_tema") === "dark" ? "dark" : "light";
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

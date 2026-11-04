@@ -7,12 +7,12 @@ from contextlib import asynccontextmanager
 from typing import Any
 from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
-from . import auth, report, scheduler
+from . import auth, comercial, descargas, report, scheduler
 from .config import settings
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -172,6 +172,43 @@ def download_excel(anio: int | None = None, corte: str | None = None, _: dict = 
         raise HTTPException(status_code=404, detail="Aún no hay Excel del reporte.")
     year = anio if anio in books else max(books)
     return FileResponse(books[year], filename=report.download_name(year), media_type=XLSX)
+
+
+@api.get("/comercial")
+def get_comercial(_: dict = Depends(current_user)) -> dict[str, Any]:
+    """Cards comerciales por mes: leads convertidos e ingresos por plan de TV (sin el detalle de filas)."""
+    st = comercial.state()
+    return {"periodos": comercial.summaries(), "en_curso": st["en_curso"], "error": st["error"],
+            "regla_dias": settings.COMERCIAL_REFRESH_DAYS}
+
+
+_PERIOD_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
+
+
+@api.get("/descargas/comercial/{periodo}")
+def download_comercial(periodo: str, _: dict = Depends(current_user)) -> FileResponse:
+    """Detalle del cálculo de un mes (.json): peticiones usadas, leads y pagos con su parte de TV."""
+    if not _PERIOD_RE.match(periodo):
+        raise HTTPException(status_code=400, detail="Periodo inválido.")
+    path = comercial.detail_path(periodo)
+    if path is None:
+        raise HTTPException(status_code=404, detail="Aún no hay indicadores para ese mes.")
+    return FileResponse(path, filename=f"Comercial {periodo}.json", media_type="application/json")
+
+
+@api.get("/descargas/tarjeta/{tarjeta}")
+def download_card(tarjeta: str, periodo: str, plan: list[str] | None = Query(default=None),
+                  _: dict = Depends(current_user)) -> Response:
+    """Excel de una card del portal (segmentos, lider, recaudo, leads) para el mes elegido, con su detalle."""
+    if not _PERIOD_RE.match(periodo):
+        raise HTTPException(status_code=400, detail="Periodo inválido.")
+    try:
+        data, name = descargas.build(tarjeta, periodo, plan)
+    except descargas.DownloadError as exc:
+        raise HTTPException(status_code=exc.status, detail=exc.message)
+    except report.ReportError as exc:
+        raise HTTPException(status_code=404, detail=exc.message)
+    return Response(data, media_type=XLSX, headers={"Content-Disposition": f"attachment; filename*=UTF-8''{quote(name)}"})
 
 
 _SNAPSHOT_RE = re.compile(r"^[A-Za-z0-9_\-]+\.json$")
